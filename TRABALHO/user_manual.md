@@ -1,0 +1,58 @@
+# Manual de Uso do Sistema — EcoVolt OS
+
+## 1. Introdução
+O **EcoVolt OS** é um sistema web desenvolvido para o gerenciamento completo de oficinas especializadas em manutenção de bicicletas elétricas. O objetivo deste manual é orientar o operador (atendente ou mecânico) sobre os fluxos de navegação e utilização das principais funcionalidades da aplicação, contemplando o cadastro de clientes, controle de equipamentos, gerenciamento de estoque de peças e o fluxo de Ordens de Serviço (OS).
+
+---
+
+## 2. Acesso ao Sistema e Tela Inicial
+Ao iniciar a aplicação Spring Boot localmente e acessar o endereço `http://localhost:8080`, o usuário é direcionado ao painel principal de controle.
+* O painel apresenta métricas rápidas de ordens abertas, estoque de peças e acesso direto aos módulos de gerenciamento.
+
+---
+
+## 3. Módulo de Clientes
+O cadastro de clientes armazena as informações dos proprietários das bicicletas elétricas.
+
+1. **Cadastrar Novo Cliente:**
+   * Acesse o menu **Clientes** > **Novo Cliente**.
+   * Preencha os campos obrigatórios: *Nome*, *Telefone*, *E-mail* e *Endereço*.
+   * Clique em **Salvar**.
+2. **Listagem e Edição:**
+   * Na listagem de clientes, é possível visualizar todos os cadastros ativos, realizar buscas e editar informações de contato caso necessário.
+
+---
+
+## 4. Módulo de Bicicletas Elétricas
+Cada cliente pode possuir uma ou mais bicicletas elétricas vinculadas ao seu perfil.
+
+1. **Vincular Bicicleta ao Cliente:**
+   * Selecione um cliente cadastrado e clique em **Adicionar Bicicleta**.
+   * Informe os dados técnicos do equipamento: *Marca*, *Modelo*, *Número de Série*, *Potência do Motor* (ex: 500W) e *Capacidade da Bateria* (ex: 48V 13Ah).
+   * Confirme o cadastro.
+
+---
+
+## 5. Gestão de Estoque de Peças
+Responsável pelo controle dos componentes e insumos de reposição utilizados nos reparos.
+
+* **Consulta de Estoque:** O sistema exibe o nome da peça, descrição detalhada, preço unitário de venda e a quantidade disponível em estoque.
+* **Baixa de Estoque:** O estoque é atualizado automaticamente pelo sistema no momento em que uma peça é vinculada a uma Ordem de Serviço concluída.
+
+---
+
+## 6. Abertura e Gestão de Ordens de Serviço (OS)
+A Ordem de Serviço é o coração do EcoVolt OS, controlando todo o ciclo de vida do atendimento.
+
+1. **Abrir Nova OS:**
+   * Selecione a bicicleta que deu entrada na oficina.
+   * Atribua o **Mecânico Responsável** pelo diagnóstico.
+   * Registre o **Relato do Cliente** (descrição do problema apresentado).
+   * Defina a **Data Prevista** para entrega.
+   * O status inicial será definido como `ABERTA` ou `EM_ANDAMENTO`.
+2. **Adicionar Peças e Serviços:**
+   * Durante o atendimento, adicione as peças necessárias ao **Item da Ordem de Serviço**, informando a quantidade utilizada.
+   * O sistema calculará automaticamente o subtotal dos itens e o valor total geral da OS.
+3. **Laudo Técnico e Fechamento:**
+   * Insira o **Laudo Técnico** com a solução aplicada.
+   * Altere o status da OS para `CONCLUIDA` para liberar o equipamento para retirada pelo cliente.

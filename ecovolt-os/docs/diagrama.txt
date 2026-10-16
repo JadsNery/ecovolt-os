@@ -1,0 +1,13 @@
+Diagrama de Classes:
+
+Classes principais sugeridas: Cliente,  Bicicleta, OrdemServico (OS), Peca / ItemServico e Mecanico / Funcionario.
+
+Atributos e Relacionamentos: Ex: Um Cliente possui uma ou mais Bicicletas; uma Bicicleta possui várias Ordens de Serviço; a OrdemServico associa peças e serviços executados.
+
+Diagrama de Entidade-Relacionamento (DER / Modelo Relacional):
+
+Traduzindo as classes para o banco de dados relacional (PostgreSQL):
+
+Tabelas: clientes, bicicletas, ordens_servico, pecas, itens_os.
+
+Definindo chaves primárias (PK) e estrangeiras (FK) — por exemplo, cliente_id dentro da tabela de bicicletas.
