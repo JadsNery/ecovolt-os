@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Cadastro de Peça')}"></head>
+<body class="bg-light">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container" style="max-width: 650px;">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white fw-bold"
+             th:text="${peca.id == null} ? 'Nova Peça no Estoque' : 'Editar Peça'">Peça</div>
+        <div class="card-body">
+            <form th:action="@{/pecas/salvar}" th:object="${peca}" method="post">
+                <input type="hidden" th:field="*{id}" />
+
+                <div class="mb-3">
+                    <label class="form-label">Nome da Peça *</label>
+                    <input type="text" class="form-control" th:field="*{nome}" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Descrição Detalhada *</label>
+                    <textarea class="form-control" rows="3" th:field="*{descricao}" required></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Preço Unitário de Venda (R$) *</label>
+                        <input type="number" step="0.01" min="0" class="form-control" th:field="*{precoUnitario}" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Quantidade em Estoque *</label>
+                        <input type="number" min="0" class="form-control" th:field="*{quantidadeEstoque}" required />
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a th:href="@{/pecas}" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-success">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

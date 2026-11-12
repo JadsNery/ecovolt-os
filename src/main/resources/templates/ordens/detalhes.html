@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Detalhes da OS #' + ${os.id})}"></head>
+<body class="bg-light">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container">
+    <!-- Cabeçalho da OS -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2 class="mb-0">
+                Ordem de Serviço <span class="text-success" th:text="'#' + ${os.id}">#1</span>
+                <span class="badge ms-2 fs-6"
+                      th:classappend="${os.status.name() == 'ABERTA'} ? 'bg-warning text-dark' : (${os.status.name() == 'EM_ANDAMENTO'} ? 'bg-primary' : 'bg-success')"
+                      th:text="${os.status}">ABERTA</span>
+            </h2>
+            <small class="text-muted"
+                   th:text="'Aberta em: ' + ${#temporals.format(os.dataAbertura, 'dd/MM/yyyy HH:mm')}">
+                Aberta em: 12/11/2026 19:30
+            </small>
+        </div>
+        <a th:href="@{/ordens}" class="btn btn-outline-secondary">Voltar para Lista</a>
+    </div>
+
+    <!-- Informações Gerais -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <small class="text-uppercase text-muted d-block">Cliente</small>
+                    <strong th:text="${os.bicicleta.cliente != null ? os.bicicleta.cliente.nome : 'Não informado'}">João Silva</strong>
+                    <div class="small text-muted" th:text="${os.bicicleta.cliente != null ? os.bicicleta.cliente.telefone : ''}">(27) 99999-0000</div>
+                </div>
+                <div class="col-md-4">
+                    <small class="text-uppercase text-muted d-block">Bicicleta Elétrica</small>
+                    <strong th:text="${os.bicicleta.marca + ' ' + os.bicicleta.modelo}">Caloi E-Vibe</strong>
+                    <div class="small text-muted"
+                         th:text="'Série: ' + ${os.bicicleta.numeroSerie} + ' | ' + ${os.bicicleta.potenciaMotor} + ' / ' + ${os.bicicleta.capacidadeBateria}">
+                        Série: 12345 | 500W / 48V 13Ah
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <small class="text-uppercase text-muted d-block">Mecânico & Previsão</small>
+                    <strong th:text="${os.mecanico.nome}">Carlos Souza</strong>
+                    <div class="small text-muted">
+                        Previsão: <span th:text="${os.dataPrevisao != null ? #temporals.format(os.dataPrevisao, 'dd/MM/yyyy') : '-'}">15/11/2026</span>
+                        <span th:if="${os.dataConclusao != null}"
+                              th:text="' | Concluída em: ' + ${#temporals.format(os.dataConclusao, 'dd/MM/yyyy HH:mm')}"></span>
+                    </div>
+                </div>
+                <div class="col-12 border-top pt-3">
+                    <small class="text-uppercase text-muted d-block">Relato do Cliente</small>
+                    <p class="mb-0" th:text="${os.relatoCliente}">Motor falhando ao subir ladeira.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seção de Peças Utilizadas -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center">
+            <span>Peças e Componentes Utilizados</span>
+            <span class="text-success fs-5"
+                  th:text="'Total Geral: R$ ' + ${#numbers.formatDecimal(os.valorTotalGeral != null ? os.valorTotalGeral : 0, 1, 'POINT', 2, 'COMMA')}">
+                Total Geral: R$ 0,00
+            </span>
+        </div>
+        <div class="card-body">
+            <!-- Formulário para adicionar peça (visível apenas se a OS não estiver CONCLUIDA) -->
+            <form th:if="${os.status.name() != 'CONCLUIDA'}"
+                  th:action="@{/ordens/{id}/adicionar-item(id=${os.id})}"
+                  method="post"
+                  class="row g-2 align-items-end mb-4 pb-3 border-bottom">
+                <div class="col-md-7">
+                    <label class="form-label">Selecionar Peça do Estoque</label>
+                    <select name="pecaId" class="form-select" required>
+                        <option value="">-- Escolha uma peça --</option>
+                        <option th:each="p : ${pecasDisponiveis}"
+                                th:value="${p.id}"
+                                th:disabled="${p.quantidadeEstoque <= 0}"
+                                th:text="${p.nome + ' - R$ ' + #numbers.formatDecimal(p.precoUnitario, 1, 'POINT', 2, 'COMMA') + ' (Estoque: ' + p.quantidadeEstoque + ')'}">
+                            Controladora 48V - R$ 250,00 (Estoque: 5)
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Quantidade</label>
+                    <input type="number" name="quantidade" class="form-control" min="1" value="1" required />
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">+ Adicionar Peça</button>
+                </div>
+            </form>
+
+            <!-- Tabela de itens já adicionados -->
+            <div class="table-responsive">
+                <table class="table table-sm align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Peça</th>
+                            <th class="text-center">Qtd.</th>
+                            <th class="text-end">Preço Unitário</th>
+                            <th class="text-end">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${os.itens}">
+                            <td th:text="${item.peca.nome}">Controladora 48V</td>
+                            <td class="text-center" th:text="${item.quantidade}">1</td>
+                            <td class="text-end"
+                                th:text="'R$ ' + ${#numbers.formatDecimal(item.precoVenda, 1, 'POINT', 2, 'COMMA')}">R$ 250,00</td>
+                            <td class="text-end fw-semibold"
+                                th:text="'R$ ' + ${#numbers.formatDecimal(item.calcularSubtotal(), 1, 'POINT', 2, 'COMMA')}">R$ 250,00</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(os.itens)}">
+                            <td colspan="4" class="text-center text-muted py-3">Nenhuma peça adicionada a esta Ordem de Serviço.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seção de Laudo Técnico e Conclusão -->
+    <div class="card border-0 shadow-sm mb-5">
+        <div class="card-header bg-white fw-bold">Laudo Técnico e Encerramento</div>
+        <div class="card-body">
+            <!-- Se ainda estiver ABERTA ou EM_ANDAMENTO, permite preencher laudo e concluir -->
+            <form th:if="${os.status.name() != 'CONCLUIDA'}"
+                  th:action="@{/ordens/{id}/concluir(id=${os.id})}"
+                  method="post"
+                  onsubmit="return confirm('Confirmar conclusão da OS? O estoque das peças utilizadas será baixado automaticamente.')">
+                <div class="mb-3">
+                    <label class="form-label">Laudo Técnico / Solução Aplicada *</label>
+                    <textarea name="laudoTecnico" class="form-control" rows="4"
+                              placeholder="Descreva o diagnóstico técnico, testes realizados e peças substituídas..."
+                              required></textarea>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        ✓ Concluir OS e Baixar Estoque
+                    </button>
+                </div>
+            </form>
+
+            <!-- Se já estiver CONCLUIDA, exibe apenas o laudo registrado -->
+            <div th:if="${os.status.name() == 'CONCLUIDA'}">
+                <div class="alert alert-success mb-3">
+                    <strong>Ordem de Serviço Concluída!</strong> Equipamento liberado para retirada e estoque atualizado.
+                </div>
+                <small class="text-uppercase text-muted d-block">Laudo Técnico Registrado</small>
+                <p class="p-3 bg-light rounded border mb-0" th:text="${os.laudoTecnico}">
+                    Substituída a controladora 48V e realizados testes de carga na bateria.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

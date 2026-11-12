@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Cadastro de Mecânico')}"></head>
+<body class="bg-light">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container" style="max-width: 620px;">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white fw-bold"
+             th:text="${mecanico.id == null} ? 'Novo Mecânico' : 'Editar Mecânico'">Mecânico</div>
+        <div class="card-body">
+            <form th:action="@{/mecanicos/salvar}" th:object="${mecanico}" method="post">
+                <input type="hidden" th:field="*{id}" />
+
+                <div class="mb-3">
+                    <label class="form-label">Nome Completo *</label>
+                    <input type="text" class="form-control" th:field="*{nome}" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Especialidade *</label>
+                    <input type="text" class="form-control" th:field="*{especialidade}"
+                           placeholder="Ex: Motores Hub, Diagnóstico Eletrônico, Baterias" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Telefone *</label>
+                    <input type="text" class="form-control" th:field="*{telefone}" required />
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a th:href="@{/mecanicos}" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-success">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

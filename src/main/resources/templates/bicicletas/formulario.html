@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Cadastro de Bicicleta')}"></head>
+<body class="bg-light">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container" style="max-width: 680px;">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white fw-bold"
+             th:text="${bicicleta.id == null} ? 'Vincular Nova Bicicleta' : 'Editar Bicicleta'">Bicicleta</div>
+        <div class="card-body">
+            <form th:action="@{/bicicletas/salvar}" th:object="${bicicleta}" method="post">
+                <input type="hidden" th:field="*{id}" />
+
+                <div class="mb-3">
+                    <label class="form-label">Proprietário (Cliente) *</label>
+                    <select name="clienteId" class="form-select" required>
+                        <option value="">-- Selecione o cliente --</option>
+                        <option th:each="c : ${clientes}"
+                                th:value="${c.id}"
+                                th:selected="${bicicleta.cliente != null and bicicleta.cliente.id == c.id}"
+                                th:text="${c.nome + ' (' + c.telefone + ')'}">
+                            João Silva
+                        </option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Marca *</label>
+                        <input type="text" class="form-control" th:field="*{marca}" placeholder="Ex: Caloi, Sense, Oggi" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Modelo *</label>
+                        <input type="text" class="form-control" th:field="*{modelo}" placeholder="Ex: E-Vibe Easy Rider" required />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Número de Série *</label>
+                    <input type="text" class="form-control" th:field="*{numeroSerie}" required />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Potência do Motor *</label>
+                        <input type="text" class="form-control" th:field="*{potenciaMotor}" placeholder="Ex: 500W" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Capacidade da Bateria *</label>
+                        <input type="text" class="form-control" th:field="*{capacidadeBateria}" placeholder="Ex: 48V 13Ah" required />
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a th:href="@{/bicicletas}" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-success">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Bicicletas Elétricas')}"></head>
+<body class="bg-light">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Bicicletas Elétricas Cadastradas</h2>
+        <a th:href="@{/bicicletas/nova}" class="btn btn-success">+ Vincular Bicicleta</a>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Marca / Modelo</th>
+                        <th>Nº de Série</th>
+                        <th>Motor / Bateria</th>
+                        <th>Proprietário</th>
+                        <th class="text-end">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="b : ${bicicletas}">
+                        <td th:text="${b.id}">1</td>
+                        <td class="fw-semibold" th:text="${b.marca + ' ' + b.modelo}">Caloi E-Vibe</td>
+                        <td><code th:text="${b.numeroSerie}">SN-12345</code></td>
+                        <td th:text="${b.potenciaMotor + ' | ' + b.capacidadeBateria}">500W | 48V 13Ah</td>
+                        <td th:text="${b.cliente != null ? b.cliente.nome : 'Sem proprietário'}">João Silva</td>
+                        <td class="text-end">
+                            <a th:href="@{/bicicletas/editar/{id}(id=${b.id})}" class="btn btn-sm btn-outline-primary">Editar</a>
+                            <a th:href="@{/bicicletas/excluir/{id}(id=${b.id})}" class="btn btn-sm btn-outline-danger"
+                               onclick="return confirm('Excluir esta bicicleta?')">Excluir</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(bicicletas)}">
+                        <td colspan="6" class="text-center text-muted py-4">Nenhuma bicicleta vinculada ainda.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

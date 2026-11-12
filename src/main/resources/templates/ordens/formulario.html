@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Abrir Ordem de Serviço')}"></head>
+<body class="bg-light">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container" style="max-width: 720px;">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white fw-bold">Abrir Nova Ordem de Serviço</div>
+        <div class="card-body">
+            <form th:action="@{/ordens/abrir}" th:object="${ordemServico}" method="post">
+
+                <div class="mb-3">
+                    <label class="form-label">Bicicleta Elétrica *</label>
+                    <select name="bicicletaId" class="form-select" required>
+                        <option value="">-- Selecione a bicicleta --</option>
+                        <option th:each="b : ${bicicletas}"
+                                th:value="${b.id}"
+                                th:text="${b.marca + ' ' + b.modelo + ' (Série: ' + b.numeroSerie + ') - Cliente: ' + (b.cliente != null ? b.cliente.nome : 'N/A')}">
+                            Caloi E-Vibe - João Silva
+                        </option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-7 mb-3">
+                        <label class="form-label">Mecânico Responsável *</label>
+                        <select name="mecanicoId" class="form-select" required>
+                            <option value="">-- Selecione o mecânico --</option>
+                            <option th:each="m : ${mecanicos}"
+                                    th:value="${m.id}"
+                                    th:text="${m.nome + (m.especialidade != null ? ' (' + m.especialidade + ')' : '')}">
+                                Carlos Souza (Baterias e Motores)
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-5 mb-3">
+                        <label class="form-label">Data Prevista de Entrega *</label>
+                        <input type="date" class="form-control" th:field="*{dataPrevisao}" required />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Relato do Cliente (Problema Apresentado) *</label>
+                    <textarea class="form-control" rows="4" th:field="*{relatoCliente}"
+                              placeholder="Descreva os sintomas relatados pelo cliente (ex: perda de autonomia, falha no display, ruído no motor)..."
+                              required></textarea>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a th:href="@{/ordens}" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-success">Abrir Ordem de Serviço</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

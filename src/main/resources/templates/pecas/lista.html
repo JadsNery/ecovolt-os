@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Estoque de Peças')}"></head>
+<body class="bg-light">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Estoque de Peças e Insumos</h2>
+        <a th:href="@{/pecas/nova}" class="btn btn-success">+ Cadastrar Peça</a>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome da Peça</th>
+                        <th>Descrição</th>
+                        <th class="text-end">Preço Unitário</th>
+                        <th class="text-center">Disponível</th>
+                        <th class="text-end">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${pecas}">
+                        <td th:text="${p.id}">1</td>
+                        <td class="fw-semibold" th:text="${p.nome}">Controladora 48V 500W</td>
+                        <td class="text-muted" th:text="${p.descricao}">Módulo controlador brushless compatível com display LCD</td>
+                        <td class="text-end"
+                            th:text="'R$ ' + ${#numbers.formatDecimal(p.precoUnitario, 1, 'POINT', 2, 'COMMA')}">
+                            R$ 250,00
+                        </td>
+                        <td class="text-center">
+                            <span class="badge"
+                                  th:classappend="${p.quantidadeEstoque > 3} ? 'bg-success' : (${p.quantidadeEstoque > 0} ? 'bg-warning text-dark' : 'bg-danger')"
+                                  th:text="${p.quantidadeEstoque} + ' un.'">
+                                5 un.
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <a th:href="@{/pecas/editar/{id}(id=${p.id})}" class="btn btn-sm btn-outline-primary">Editar</a>
+                            <a th:href="@{/pecas/excluir/{id}(id=${p.id})}" class="btn btn-sm btn-outline-danger"
+                               onclick="return confirm('Excluir esta peça do estoque?')">Excluir</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(pecas)}">
+                        <td colspan="6" class="text-center text-muted py-4">Nenhuma peça cadastrada no estoque.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

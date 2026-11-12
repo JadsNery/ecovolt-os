@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Ordens de Serviço')}"></head>
+<body class="bg-light">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Ordens de Serviço (OS)</h2>
+        <a th:href="@{/ordens/nova}" class="btn btn-success">+ Abrir Nova OS</a>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#OS</th>
+                        <th>Status</th>
+                        <th>Bicicleta / Cliente</th>
+                        <th>Mecânico</th>
+                        <th>Abertura</th>
+                        <th>Previsão</th>
+                        <th>Total</th>
+                        <th class="text-end">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="os : ${ordens}">
+                        <td class="fw-bold" th:text="'#' + ${os.id}">#1</td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${os.status.name() == 'ABERTA'} ? 'bg-warning text-dark' : (${os.status.name() == 'EM_ANDAMENTO'} ? 'bg-primary' : 'bg-success')"
+                                  th:text="${os.status}">ABERTA</span>
+                        </td>
+                        <td>
+                            <div class="fw-semibold" th:text="${os.bicicleta.marca + ' ' + os.bicicleta.modelo}">Caloi E-Vibe</div>
+                            <small class="text-muted" th:text="${os.bicicleta.cliente != null ? os.bicicleta.cliente.nome : 'Sem cliente'}">João Silva</small>
+                        </td>
+                        <td th:text="${os.mecanico.nome}">Carlos Souza</td>
+                        <td th:text="${os.dataAbertura != null ? #temporals.format(os.dataAbertura, 'dd/MM/yyyy HH:mm') : '-'}">12/11/2026</td>
+                        <td th:text="${os.dataPrevisao != null ? #temporals.format(os.dataPrevisao, 'dd/MM/yyyy') : '-'}">15/11/2026</td>
+                        <td class="fw-semibold text-success"
+                            th:text="'R$ ' + ${#numbers.formatDecimal(os.valorTotalGeral != null ? os.valorTotalGeral : 0, 1, 'POINT', 2, 'COMMA')}">
+                            R$ 0,00
+                        </td>
+                        <td class="text-end">
+                            <a th:href="@{/ordens/{id}(id=${os.id})}" class="btn btn-sm btn-outline-primary">
+                                Gerenciar / Detalhes
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(ordens)}">
+                        <td colspan="8" class="text-center text-muted py-4">Nenhuma Ordem de Serviço registrada ainda.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
